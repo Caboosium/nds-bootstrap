@@ -75,7 +75,13 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" CXXFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" CXXFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
+	CFLAGS="$cflags" \
+	CXXFLAGS="$cflags" \
+	LDFLAGS="$ldflags" \
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	LDFLAGS_FOR_TARGET="" \
+	../../gcc-$GCC_VER/configure \
 	--enable-languages=c,c++,objc \
 	--enable-lto $plugin_ld \
 	--with-cpu=750 \
@@ -89,7 +95,7 @@ then
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix\
 	--with-system-zlib\
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 29" \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 29-1" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
 	touch configured-gcc
@@ -119,6 +125,7 @@ unset LDFLAGS
 
 if [ ! -f configured-newlib ]
 then
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	../../newlib-$NEWLIB_VER/configure \
 	--target=$target \
 	--prefix=$prefix \
@@ -135,7 +142,7 @@ then
 fi
 if [ ! -f installed-newlib ]
 then
-	$MAKE install || { echo "Error installing newlib"; exit 1; }
+	$MAKE install -j1 || { echo "Error installing newlib"; exit 1; }
 	touch installed-newlib
 fi
 

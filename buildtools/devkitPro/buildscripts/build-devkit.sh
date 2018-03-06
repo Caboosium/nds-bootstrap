@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
-#	devkitARM release 46
-#	devkitPPC release 29
+#	devkitARM release 47
+#	devkitPPC release 29-1
 #---------------------------------------------------------------------------------
 
 if [ 0 -eq 1 ] ; then
@@ -28,33 +28,35 @@ GENERAL_TOOLS_VER=1.0.0
 LIBGBA_VER=0.5.0
 GBATOOLS_VER=1.0.0
 
-LIBNDS_VER=1.6.0
+LIBNDS_VER=1.6.2
 DEFAULT_ARM7_VER=0.7.0
-DSWIFI_VER=0.4.0
-MAXMOD_VER=1.0.10
+DSWIFI_VER=0.4.1
+MAXMOD_VER=1.0.11
 FILESYSTEM_VER=0.9.13
 LIBFAT_VER=1.1.0
 DSTOOLS_VER=1.1.0
 GRIT_VER=0.8.14
-NDSTOOL_VER=2.0.1
+NDSTOOL_VER=2.0.3
 DLDITOOL_VER=1.24.0
 MMUTIL_VER=1.8.6
 
 DFU_UTIL_VER=0.9.1
-STLINK_VER=1.2.1
+STLINK_VER=1.2.2
 
 GAMECUBE_TOOLS_VER=1.0.1
 LIBOGC_VER=1.8.16
 WIILOAD_VER=0.5.1
 
-LIBCTRU_VER=1.2.0
-CITRO3D_VER=1.2.0
+LIBCTRU_VER=1.3.0
+CITRO3D_VER=1.3.0
 TOOLS3DS_VER=1.1.4
-LINK3DS_VER=0.5.1
-PICASSO_VER=2.5.0
+LINK3DS_VER=0.5.2
+PICASSO_VER=2.6.2
 
-GP32_TOOLS_VER=1.0.1
+GP32_TOOLS_VER=1.0.3
 LIBMIRKO_VER=0.9.7
+
+OSXMIN=${OSXMIN:-10.9}
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
@@ -165,8 +167,16 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
 	Darwin )
-		cflags="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -I/usr/local/include"
-		ldflags="-mmacosx-version-min=10.5 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -L/usr/local/lib"
+		cflags="-mmacosx-version-min=${OSXMIN} -I/usr/local/include"
+		ldflags="-mmacosx-version-min=${OSXMIN} -L/usr/local/lib"
+		if [ "x${OSXSDKPATH}x" != "xx" ]; then
+			cflags="$cflags -isysroot ${OSXSDKPATH}"
+			ldflags="$ldflags -Wl,-syslibroot,${OSXSDKPATH}"
+		fi
+		TESTCC=`cc -v 2>&1 | grep clang`
+		if [ "x${TESTCC}x" != "xx" ]; then
+			cflags="$cflags -fbracket-depth=512"
+		fi
     ;;
 	MINGW32* )
 		cflags="-D__USE_MINGW_ACCESS"
@@ -175,12 +185,13 @@ case $PLATFORM in
     ;;
 esac
 
+
 BUILDSCRIPTDIR=$(pwd)
 BUILDDIR=$(pwd)/.$package
+
 if [ ! -z $CROSSBUILD ]; then
 	BUILDDIR=$BUILDDIR-$CROSSBUILD
 fi
-DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
@@ -222,7 +233,7 @@ for archive in $archives $targetarchives $hostarchives
 do
 	echo $archive
 	if [ ! -f $archive ]; then
-		$FETCH http://downloads.sf.net/devkitpro/$archive || { echo "Error: Failed to download $archive"; exit 1; }
+		$FETCH https://github.com/devkitPro/buildscripts/releases/download/sources/$archive || { echo "Error: Failed to download $archive"; exit 1; }
 	fi
 done
 
@@ -271,9 +282,7 @@ if [ ! -z $CROSSBUILD ]; then
 	if [ $VERSION -eq 1 ]; then
 		cp -v $CROSSBINPATH/libusb-1.0.dll $prefix/bin
 	fi
-	cp -v	$CROSSLIBPATH/libstdc++-6.dll \
-		$CROSSLIBPATH/libgcc_s_sjlj-1.dll \
-		$prefix/bin
+	cp -v	$CROSSLIBPATH/*.dll $prefix/bin
 fi
 
 echo "stripping installed binaries"

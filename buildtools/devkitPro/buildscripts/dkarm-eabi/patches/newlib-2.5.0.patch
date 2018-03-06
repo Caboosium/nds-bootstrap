@@ -611,7 +611,7 @@ index 0000000..b6cdfae
 +m4_include([../acinclude.m4])
 diff --git a/libgloss/libsysbase/build_argv.c b/libgloss/libsysbase/build_argv.c
 new file mode 100644
-index 0000000..79d2006
+index 0000000..3ca95d5
 --- /dev/null
 +++ b/libgloss/libsysbase/build_argv.c
 @@ -0,0 +1,31 @@
@@ -633,13 +633,13 @@ index 0000000..79d2006
 +	char** argv = (char**)(((int)data + len + sizeof(char **)) & ~(sizeof(char **)-1));
 +	char* end = data + len - 1;
 +	int argCount = 0;
-+	
++
 +	do {
 +		argv[argCount++] = data;			// Add next arg to argv list
 +		while (*(data) && data < end) data++;		// Move to next NULL delimiter
 +		data++;						// Move to one after the NULL delimiter
 +	} while (data < end);
-+	
++
 +	*end = '\0';						// Force NULL terminator for last arg
 +
 +	argstruct->argv = argv;
@@ -648,7 +648,7 @@ index 0000000..79d2006
 +}
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 0000000..2a0fa03
+index 0000000..90d2dc5
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
 @@ -0,0 +1,201 @@
@@ -703,7 +703,7 @@ index 0000000..2a0fa03
 +		}
 +
 +		/* Grab the next directory name from extra */
-+		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR); 
++		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR);
 +		if (extraEnd == NULL) {
 +			extraEnd = strrchr (extra, '\0');
 +		} else {
@@ -715,12 +715,12 @@ index 0000000..2a0fa03
 +			break;
 +		}
 +
-+		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0) 
++		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0)
 +			&& ((extra[sizeof(DIRECTORY_THIS)-1] == DIRECTORY_SEPARATOR_CHAR)
 +				||(extra[sizeof(DIRECTORY_THIS)-1] == '\0')))
 +		{
 +			/* Don't copy anything */
-+		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0) 
++		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0)
 +			&& ((extra[sizeof(DIRECTORY_PARENT)-1] == DIRECTORY_SEPARATOR_CHAR)
 +				||(extra[sizeof(DIRECTORY_PARENT)-1] == '\0')))
 +		{
@@ -855,7 +855,7 @@ index 0000000..2a0fa03
 +}
 diff --git a/libgloss/libsysbase/chmod.c b/libgloss/libsysbase/chmod.c
 new file mode 100644
-index 0000000..ce79a2c
+index 0000000..3668b58
 --- /dev/null
 +++ b/libgloss/libsysbase/chmod.c
 @@ -0,0 +1,30 @@
@@ -873,7 +873,7 @@ index 0000000..ce79a2c
 +
 +	/* Get device from path name */
 +	dev = FindDevice(path);
-+	
++
 +	if (dev < 0) {
 +		r->_errno = ENODEV;
 +		ret = -1;
@@ -891,7 +891,7 @@ index 0000000..ce79a2c
 +
 diff --git a/libgloss/libsysbase/close.c b/libgloss/libsysbase/close.c
 new file mode 100644
-index 0000000..d3563fb
+index 0000000..a251e5b
 --- /dev/null
 +++ b/libgloss/libsysbase/close.c
 @@ -0,0 +1,49 @@
@@ -927,7 +927,7 @@ index 0000000..d3563fb
 +			dev = handle->device;
 +			handle->refcount--;
 +			if (handle->refcount == 0 ) {
-+				
++
 +				if(devoptab_list[dev]->close_r) {
 +					ptr->deviceData = devoptab_list[dev]->deviceData;
 +					ret = devoptab_list[dev]->close_r(ptr,handle->fileStruct);
@@ -976,7 +976,7 @@ index 0000000..48ce950
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
 diff --git a/libgloss/libsysbase/configure b/libgloss/libsysbase/configure
-new file mode 100755
+new file mode 100644
 index 0000000..c4b5a79
 --- /dev/null
 +++ b/libgloss/libsysbase/configure
@@ -5141,7 +5141,7 @@ index 0000000..c4b5a79
 +
 diff --git a/libgloss/libsysbase/configure.in b/libgloss/libsysbase/configure.in
 new file mode 100644
-index 0000000..4c31956
+index 0000000..bf276a4
 --- /dev/null
 +++ b/libgloss/libsysbase/configure.in
 @@ -0,0 +1,199 @@
@@ -5204,9 +5204,9 @@ index 0000000..4c31956
 +  d10v*)
 +	;;
 +  h8300*-*-*)
-+	;;	
++	;;
 +  h8500-*-*)
-+	;;	
++	;;
 +  i[3456]86-*-sco*)
 +	;;
 +  lm32-*-*)
@@ -5226,7 +5226,7 @@ index 0000000..4c31956
 +  v850*-*-*)
 +	;;
 +  w65-*-*)
-+	;;	
++	;;
 +  xstormy16-*-*)
 +	;;
 +  z8k-*-*)
@@ -5721,7 +5721,7 @@ index 0000000..c6b8c92
 +}
 diff --git a/libgloss/libsysbase/fork.c b/libgloss/libsysbase/fork.c
 new file mode 100644
-index 0000000..712b13e
+index 0000000..3aa75a3
 --- /dev/null
 +++ b/libgloss/libsysbase/fork.c
 @@ -0,0 +1,25 @@
@@ -5740,7 +5740,7 @@ index 0000000..712b13e
 +	   struct _reent * r) {
 +//---------------------------------------------------------------------------------
 +#else
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_fork, (),
 +        _NOARGS) {
@@ -6469,7 +6469,7 @@ index 0000000..4565909
 +char *fake_heap_start = (char*)0;
 diff --git a/libgloss/libsysbase/mkdir.c b/libgloss/libsysbase/mkdir.c
 new file mode 100644
-index 0000000..4175cf8
+index 0000000..b4fcbd3
 --- /dev/null
 +++ b/libgloss/libsysbase/mkdir.c
 @@ -0,0 +1,19 @@
@@ -6489,7 +6489,7 @@ index 0000000..4175cf8
 +	} else {
 +		r->_errno = ENOSYS;
 +	}
-+	
++
 +	return ret;
 +}
 diff --git a/libgloss/libsysbase/open.c b/libgloss/libsysbase/open.c
@@ -6612,7 +6612,7 @@ index 0000000..7f3f7f2
 +
 diff --git a/libgloss/libsysbase/rename.c b/libgloss/libsysbase/rename.c
 new file mode 100644
-index 0000000..7520d1d
+index 0000000..f8a0aa9
 --- /dev/null
 +++ b/libgloss/libsysbase/rename.c
 @@ -0,0 +1,41 @@
@@ -6654,7 +6654,7 @@ index 0000000..7520d1d
 +	} else {
 +		r->_errno = EXDEV;
 +	}
-+	
++
 +	return ret;
 +}
 diff --git a/libgloss/libsysbase/rmdir.c b/libgloss/libsysbase/rmdir.c
@@ -6806,7 +6806,7 @@ index 0000000..e474c47
 +
 diff --git a/libgloss/libsysbase/statvfs.c b/libgloss/libsysbase/statvfs.c
 new file mode 100644
-index 0000000..b3dec22
+index 0000000..84e2213
 --- /dev/null
 +++ b/libgloss/libsysbase/statvfs.c
 @@ -0,0 +1,24 @@
@@ -6831,7 +6831,7 @@ index 0000000..b3dec22
 +	} else {
 +		r->_errno = ENOSYS;
 +	}
-+	
++
 +	return ret;
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
@@ -6941,7 +6941,7 @@ index 0000000..044f12d
 +
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
 new file mode 100644
-index 0000000..67db6c7
+index 0000000..45e9781
 --- /dev/null
 +++ b/libgloss/libsysbase/times.c
 @@ -0,0 +1,21 @@
@@ -6958,7 +6958,7 @@ index 0000000..67db6c7
 +	struct tms *ptms) {
 +#else
 +clock_t _DEFUN (_times, (buf),
-+		struct tms *buf) { 
++		struct tms *buf) {
 +
 +	struct _reent *r = _REENT;
 +#endif
@@ -7075,7 +7075,7 @@ index 0000000..9a61639
 +
 diff --git a/libgloss/libsysbase/wait.c b/libgloss/libsysbase/wait.c
 new file mode 100644
-index 0000000..322c847
+index 0000000..f64bf13
 --- /dev/null
 +++ b/libgloss/libsysbase/wait.c
 @@ -0,0 +1,29 @@
@@ -7088,22 +7088,22 @@ index 0000000..322c847
 +#include <_syslist.h>
 +#include <errno.h>
 +
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_wait_r, (r, status),
 +		struct _reent *r _AND
 +		int  *status) {
 +
 +#else
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_wait, (status),
 +	int  *status) {
 +	struct _reent *r = _REENT;
 +#endif
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +	r->_errno = ENOSYS;
 +	return -1;
 +}
@@ -7515,7 +7515,7 @@ index 84219ca..af9d12c 100644
  #if defined(__CYGWIN__) || defined(__rtems__)
  int	_EXFUN(getdtablesize, (void));
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index 8572821..52b6469 100644
+index 8572821..e6baf35 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
 @@ -107,7 +107,7 @@ beginning with <<"LC_">>.
@@ -7552,14 +7552,44 @@ index 8572821..52b6469 100644
  #ifndef DEFAULT_LOCALE
 -#define DEFAULT_LOCALE	"C"
 +#ifdef __DEFAULT_UTF8__
-+#define DEFAULT_LOCALE	 "C"
-+#else
 +#define DEFAULT_LOCALE	 "C.UTF-8"
++#else
++#define DEFAULT_LOCALE	 "C"
 +#endif
  #endif
  
  #ifdef _MB_CAPABLE
-@@ -255,10 +262,11 @@ const struct __locale_t __C_locale =
+@@ -222,8 +229,13 @@ char __default_locale[ENCODING_LEN + 1] = DEFAULT_LOCALE;
+ const struct __locale_t __C_locale =
+ {
+   { "C", "C", "C", "C", "C", "C", "C", },
++#if defined ( __DEFAULT_UTF8__ )
++  __utf8_wctomb,
++  __utf8_mbtowc,
++#else
+   __ascii_wctomb,
+   __ascii_mbtowc,
++#endif
+   0,
+   DEFAULT_CTYPE_PTR,
+   {
+@@ -234,9 +246,15 @@ const struct __locale_t __C_locale =
+     CHAR_MAX, CHAR_MAX
+   },
+ #ifndef __HAVE_LOCALE_INFO__
++#ifdef __DEFAULT_UTF8__
++  "\6",
++  "UTF-8",
++  "UTF-8",
++#else
+   "\1",
+   "ASCII",
+   "ASCII",
++#endif
+ #else /* __HAVE_LOCALE_INFO__ */
+   {
+     { NULL, NULL },			/* LC_ALL */
+@@ -255,10 +273,11 @@ const struct __locale_t __C_locale =
  };
  #endif /* _MB_CAPABLE */
  
@@ -7572,7 +7602,23 @@ index 8572821..52b6469 100644
    __utf8_wctomb,
    __utf8_mbtowc,
  #else
-@@ -312,7 +320,7 @@ _DEFUN(_setlocale_r, (p, category, locale),
+@@ -275,9 +294,15 @@ struct __locale_t __global_locale =
+     CHAR_MAX, CHAR_MAX
+   },
+ #ifndef __HAVE_LOCALE_INFO__
++#ifdef __DEFAULT_UTF8__
++  "\6",
++  "UTF-8",
++  "UTF-8",
++#else
+   "\1",
+   "ASCII",
+   "ASCII",
++#endif
+ #else /* __HAVE_LOCALE_INFO__ */
+   {
+     { NULL, NULL },			/* LC_ALL */
+@@ -312,7 +337,7 @@ _DEFUN(_setlocale_r, (p, category, locale),
  {
  #ifndef _MB_CAPABLE
    if (locale)
@@ -7581,7 +7627,7 @@ index 8572821..52b6469 100644
        if (strcmp (locale, "POSIX") && strcmp (locale, "C")
  	  && strcmp (locale, ""))
          return NULL;
-@@ -995,6 +1003,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
+@@ -995,6 +1020,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
  
  const char *
  __locale_ctype_ptr (void)
@@ -7589,6 +7635,80 @@ index 8572821..52b6469 100644
  {
    return __get_current_locale ()->ctype_ptr;
  }
+diff --git a/newlib/libc/machine/arm/Makefile.am b/newlib/libc/machine/arm/Makefile.am
+index 62ed158..7f34177 100644
+--- a/newlib/libc/machine/arm/Makefile.am
++++ b/newlib/libc/machine/arm/Makefile.am
+@@ -11,7 +11,9 @@ noinst_LIBRARIES = lib.a
+ lib_a_SOURCES = setjmp.S access.c strcmp.S strcpy.c \
+ 		aeabi_memcpy.c aeabi_memcpy-armv7a.S \
+ 		aeabi_memmove.c aeabi_memmove-soft.S \
+-		aeabi_memset.c aeabi_memset-soft.S aeabi_memclr.c
++		aeabi_memset.c aeabi_memset-soft.S aeabi_memclr.c \
++		sync_synchronize.c
++
+ lib_a_SOURCES += memchr-stub.c
+ lib_a_SOURCES += memchr.S
+ lib_a_SOURCES += memcpy-stub.c
+diff --git a/newlib/libc/machine/arm/Makefile.in b/newlib/libc/machine/arm/Makefile.in
+index 4908208..694cbb0 100644
+--- a/newlib/libc/machine/arm/Makefile.in
++++ b/newlib/libc/machine/arm/Makefile.in
+@@ -76,10 +76,10 @@ am_lib_a_OBJECTS = lib_a-setjmp.$(OBJEXT) lib_a-access.$(OBJEXT) \
+ 	lib_a-aeabi_memmove.$(OBJEXT) \
+ 	lib_a-aeabi_memmove-soft.$(OBJEXT) \
+ 	lib_a-aeabi_memset.$(OBJEXT) lib_a-aeabi_memset-soft.$(OBJEXT) \
+-	lib_a-aeabi_memclr.$(OBJEXT) lib_a-memchr-stub.$(OBJEXT) \
+-	lib_a-memchr.$(OBJEXT) lib_a-memcpy-stub.$(OBJEXT) \
+-	lib_a-memcpy.$(OBJEXT) lib_a-strlen-stub.$(OBJEXT) \
+-	lib_a-strlen.$(OBJEXT)
++	lib_a-aeabi_memclr.$(OBJEXT) lib_a-sync_synchronize.$(OBJEXT) \
++	lib_a-memchr-stub.$(OBJEXT) lib_a-memchr.$(OBJEXT) \
++	lib_a-memcpy-stub.$(OBJEXT) lib_a-memcpy.$(OBJEXT) \
++	lib_a-strlen-stub.$(OBJEXT) lib_a-strlen.$(OBJEXT)
+ lib_a_OBJECTS = $(am_lib_a_OBJECTS)
+ DEFAULT_INCLUDES = -I.@am__isrc@
+ depcomp =
+@@ -209,8 +209,8 @@ noinst_LIBRARIES = lib.a
+ lib_a_SOURCES = setjmp.S access.c strcmp.S strcpy.c aeabi_memcpy.c \
+ 	aeabi_memcpy-armv7a.S aeabi_memmove.c aeabi_memmove-soft.S \
+ 	aeabi_memset.c aeabi_memset-soft.S aeabi_memclr.c \
+-	memchr-stub.c memchr.S memcpy-stub.c memcpy.S strlen-stub.c \
+-	strlen.S
++	sync_synchronize.c memchr-stub.c memchr.S memcpy-stub.c \
++	memcpy.S strlen-stub.c strlen.S
+ lib_a_CCASFLAGS = $(AM_CCASFLAGS)
+ lib_a_CFLAGS = $(AM_CFLAGS)
+ ACLOCAL_AMFLAGS = -I ../../.. -I ../../../..
+@@ -374,6 +374,12 @@ lib_a-aeabi_memclr.o: aeabi_memclr.c
+ lib_a-aeabi_memclr.obj: aeabi_memclr.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-aeabi_memclr.obj `if test -f 'aeabi_memclr.c'; then $(CYGPATH_W) 'aeabi_memclr.c'; else $(CYGPATH_W) '$(srcdir)/aeabi_memclr.c'; fi`
+ 
++lib_a-sync_synchronize.o: sync_synchronize.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-sync_synchronize.o `test -f 'sync_synchronize.c' || echo '$(srcdir)/'`sync_synchronize.c
++
++lib_a-sync_synchronize.obj: sync_synchronize.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-sync_synchronize.obj `if test -f 'sync_synchronize.c'; then $(CYGPATH_W) 'sync_synchronize.c'; else $(CYGPATH_W) '$(srcdir)/sync_synchronize.c'; fi`
++
+ lib_a-memchr-stub.o: memchr-stub.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-memchr-stub.o `test -f 'memchr-stub.c' || echo '$(srcdir)/'`memchr-stub.c
+ 
+diff --git a/newlib/libc/machine/arm/sync_synchronize.c b/newlib/libc/machine/arm/sync_synchronize.c
+new file mode 100644
+index 0000000..3acc9e0
+--- /dev/null
++++ b/newlib/libc/machine/arm/sync_synchronize.c
+@@ -0,0 +1,10 @@
++#if __ARM_ARCH < 6
++#include <sys/cdefs.h>
++void __attribute__((weak))
++__sync_synchronize (void)
++{
++  __warn_references (__sync_synchronize,
++		     "legacy compatible __sync_synchronize used. Not suitable for multi-threaded applications");
++  return;
++}
++#endif
 diff --git a/newlib/libc/machine/arm/sys/stdio.h b/newlib/libc/machine/arm/sys/stdio.h
 new file mode 100644
 index 0000000..4eb278e

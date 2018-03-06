@@ -26,18 +26,25 @@ http://www.multiprecision.org/
 sudo apt-get install libgmp-dev libmpfr-dev libmpc-dev
 
 Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib,
-and libusb. Again these are built as static libraries for ease of packaging
-but you can probably use the versions supplied by your distro.
+expat, and libusb. Again these are built as static libraries for ease of
+packaging but you can probably use the versions supplied by your distro.
 
 http://freeimage.sourceforge.net/
 http://www.zlib.net
 http://www.libusb.org
+http://expat.sourceforge.net/
 
-sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev
+sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev libexpat1-dev
+
 
 Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with
 
 sudo apt-get install mesa-common-dev
+
+For building the OSX versions we install the Xcode commandline tools and build
+pkg-config from source as well as static versions of the libraries listed above.
+This helps keep the dependencies to a minimum so end users can use the tools
+with only Xcode command line tools to obtain make.
 
 To avoid having to manually answer prompts during the build the script will
 read variables from config.sh if it exists. Copy config.sh.sample to config.sh
@@ -85,16 +92,6 @@ to use the built in crt0 and linkscript use powerpc-eabi-gcc to link your projec
 using the command line switch -mgcn for a bare bones system, -mogc to use libogc and
 the multi-threaded microkernel for gamecube, -mrvl for wii, -mwup for wii u.
 
-Using devkitPSP
----------------
-
-All you need to do now to use devkitPSP is make sure that your freshly built tools
-are in your PATH, something like this;
-
-export PATH=$PATH:<path to devkitPSP>/bin
-
-(Obviously replace <path to devkitPSP> with the full path to the devkitPSP
-installation directory)
 
 Getting started
 ---------------
