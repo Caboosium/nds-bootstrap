@@ -1,38 +1,25 @@
-language: cpp
+language: c
+
+compiler:
+  - gcc
+
+sudo: required
+#dist: trusty
 
 before_install:
-  - wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
-  - export DEVKITPRO=/home/travis/devkitPro
-  - export DEVKITARM=${DEVKITPRO}/devkitARM
+  - # wget http://sourceforge.net/projects/devkitpro/files/Automated%20Installer/devkitARMupdate.pl
+  - export DEVKITPRO=$TRAVIS_BUILD_DIR/buildtools/devkitPro
+  - export DEVKITARM=$DEVKITPRO/devkitARM
+  - # export DEVKITPRO=/home/travis/devkitPro
+  - # export DEVKITARM=${DEVKITPRO}/devkitARM
 
 install:
-  - sudo perl devkitARMupdate.pl
-  - wget --no-check-certificate https://codeload.github.com/ahezard/libnds/zip/master -O /tmp/libnds.zip
-  - unzip /tmp/libnds.zip
-  - cd libnds-master
-  - make && sudo make install
-  - cd ..
+  - # mkdir ${DEVKITPRO}
+  - sudo chmod 777 ${DEVKITPRO} -R
+  - # sudo perl devkitARMupdate.pl
+  - sudo chmod 777 ${DEVKITPRO} -R
+  - # sudo rm ${DEVKITPRO}/devkitARM/bin/ndstool
+  - # sudo cp ${DEVKITPRO2}/devkitARM/bin/ndstool ${DEVKITPRO}/devkitARM/bin/
 
 script:
-  - make
-  
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.9
-    - g++-4.9
-    - libstdc++6
-    - lftp
-
-after_success:
-  - >
-    if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_BRANCH" == "card" ]; then
-        GITDATE="`git show -s --date=short --format='%ad' | sed 's/-//g'`"
-        GITREV="`git show -s --format='%h'`"
-        REV_NAME="bootstrap-${TRAVIS_BRANCH}-${GITDATE}-${GITREV}.nds"
-        cp bootstrap.nds $REV_NAME
-        lftp ftp://nds-bootstrap:$BUILD_PASSWORD@joshuadoes.com  -e "set net:timeout 5; set net:max-retries 2; cd files; put ${REV_NAME}; bye"
-        lftp sftp://twlbuild:$BUILD_PASSWORD2@labs.projectkaeru.xyz  -e "set net:timeout 5; set net:max-retries 2; cd files; put ${REV_NAME}; bye"
-    fi
+  - sudo make -j 2
